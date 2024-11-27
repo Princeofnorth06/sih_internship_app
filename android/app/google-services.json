@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "997916127203",
+    "project_id": "rajasthan-connect-3f1d3",
+    "storage_bucket": "rajasthan-connect-3f1d3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997916127203:android:ac767872049582c2bbfad6",
+        "android_client_info": {
+          "package_name": "com.example.sih_internship_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "997916127203-qc83g8u0kcjsdcee63256racar6nqgro.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgGg0vVcqSUkiSSIbaTbdti2IqEGY7alE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997916127203-qc83g8u0kcjsdcee63256racar6nqgro.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

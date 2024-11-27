@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/helpers/utils.dart';
 import 'package:sih_internship_app/main.dart';
 import 'package:sih_internship_app/screens/auth/signup.dart';
@@ -14,19 +17,65 @@ class _LoginState extends State<Login> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _signUp() {
-    if (_formKey.currentState!.validate()) {
-      // Perform sign-up logic (e.g., API call)
-      Utils.showtoast("Login Succusfull");
+  Future<void> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        Utils.showtoast('Google Sign-In canceled.');
+        return;
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      Utils.showtoast('Signed in with Google');
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      Utils.showtoast('Google Sign-In Failed: ${e.message}');
+    }
+  }
+
+  void _login() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        Utils.showtoast('Login Successful');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          Utils.showtoast('No user found for that email.');
+        } else if (e.code == 'wrong-password') {
+          Utils.showtoast('Wrong password provided.');
+        } else {
+          Utils.showtoast('Login Failed: ${e.message}');
+        }
+      } catch (e) {
+        Utils.showtoast('Login Failed: $e');
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 122, 190, 247),
+      backgroundColor: AppColors.primary,
       // appBar: AppBar(
       //   centerTitle: true,
       //   backgroundColor: const Color.fromARGB(255, 122, 190, 247),
@@ -41,7 +90,7 @@ class _LoginState extends State<Login> {
           key: _formKey,
           child: Center(
             child: Container(
-              height: mq.height * 0.4,
+              height: mq.height * 0.5,
               width: mq.width * 0.8,
               padding: EdgeInsets.symmetric(horizontal: mq.height * 0.02),
               decoration: BoxDecoration(
@@ -110,12 +159,11 @@ class _LoginState extends State<Login> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 122, 190, 247),
+                        backgroundColor: AppColors.primary,
                         fixedSize: Size(mq.width * 0.75, mq.height * 0.064),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5))),
-                    onPressed: _signUp,
+                    onPressed: _login,
                     child: const Text(
                       'Login',
                       style: TextStyle(color: Colors.white, fontSize: 18),
@@ -136,7 +184,33 @@ class _LoginState extends State<Login> {
                           },
                           child: const Text('SignUp')),
                     ],
-                  )
+                  ),
+                  SizedBox(
+                    height: mq.height * 0.015,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      fixedSize: Size(mq.width * 0.75, mq.height * 0.064),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                    ),
+                    onPressed: _signInWithGoogle,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/google.png',
+                            height:
+                                24), // Ensure you add a Google logo in assets
+                        const SizedBox(width: 10),
+                        const Text(
+                          'Sign In with Google',
+                          style: TextStyle(
+                              color: AppColors.background, fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

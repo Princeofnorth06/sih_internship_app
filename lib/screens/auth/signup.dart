@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/helpers/utils.dart';
 import 'package:sih_internship_app/main.dart';
 import 'package:sih_internship_app/screens/home_screen.dart';
@@ -16,19 +19,65 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  void _signUp() {
-    if (_formKey.currentState!.validate()) {
-      // Perform sign-up logic (e.g., API call)
-      Utils.showtoast('Sign Up Succesfull');
+  Future<void> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        Utils.showtoast('Google Sign-In canceled.');
+        return;
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      Utils.showtoast('Signed in with Google');
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      Utils.showtoast('Google Sign-In Failed: ${e.message}');
+    }
+  }
+
+  void _signUp() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        Utils.showtoast('Sign Up Successful');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          Utils.showtoast('The password provided is too weak.');
+        } else if (e.code == 'email-already-in-use') {
+          Utils.showtoast('An account already exists for that email.');
+        } else {
+          Utils.showtoast('Sign Up Failed: ${e.message}');
+        }
+      } catch (e) {
+        Utils.showtoast('Sign Up Failed: $e');
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 122, 190, 247),
+      backgroundColor: AppColors.primary,
       // appBar: AppBar(
       //   centerTitle: true,
       //   backgroundColor: const Color.fromARGB(255, 122, 190, 247),
@@ -43,13 +92,13 @@ class _SignUpState extends State<SignUp> {
           key: _formKey,
           child: Center(
             child: Container(
-              height: mq.height * 0.5,
+              height: mq.height * 0.6,
               width: mq.width * 0.8,
               padding: EdgeInsets.symmetric(
                   horizontal: mq.height * 0.02, vertical: mq.width * 0.02),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
+                color: AppColors.background,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -57,7 +106,10 @@ class _SignUpState extends State<SignUp> {
                 children: [
                   const Text(
                     'Sign Up',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: AppColors.primary),
                   ),
                   const SizedBox(
                     height: 15,
@@ -68,6 +120,7 @@ class _SignUpState extends State<SignUp> {
                     child: TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(
+                          //fillColor: AppColors.background,
                           labelText: 'Email',
                           border: OutlineInputBorder(
                               borderRadius:
@@ -136,8 +189,7 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 122, 190, 247),
+                        backgroundColor: AppColors.primary,
                         fixedSize: Size(mq.width * 0.75, mq.height * 0.064),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5))),
@@ -162,7 +214,33 @@ class _SignUpState extends State<SignUp> {
                           },
                           child: const Text('Login')),
                     ],
-                  )
+                  ),
+                  SizedBox(
+                    height: mq.height * 0.015,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      fixedSize: Size(mq.width * 0.75, mq.height * 0.064),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                    ),
+                    onPressed: _signInWithGoogle,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/google.png',
+                            height:
+                                24), // Ensure you add a Google logo in assets
+                        const SizedBox(width: 10),
+                        const Text(
+                          'Sign In with Google',
+                          style: TextStyle(
+                              color: AppColors.background, fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
