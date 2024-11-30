@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/screens/auth/signup.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -48,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 122, 190, 247),
+      backgroundColor: AppColors.primary,
       body: Center(
         child: _controller.isAnimating || _controller.isCompleted
             ? AnimatedBuilder(

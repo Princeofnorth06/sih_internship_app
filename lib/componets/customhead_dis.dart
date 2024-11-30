@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/main.dart';
 
 class HeadDes extends StatelessWidget {
@@ -13,7 +14,7 @@ class HeadDes extends StatelessWidget {
     return Container(
       //color: Colors.blue,
       decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 136, 194, 241),
+          color: AppColors.primary,
           border: Border.all(color: Colors.blue),
           borderRadius: BorderRadius.circular(5)),
       height: mq.height * 0.15,

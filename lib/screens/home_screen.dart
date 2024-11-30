@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/screens/application.dart';
 import 'package:sih_internship_app/screens/homepage.dart';
 import 'package:sih_internship_app/screens/jobs.dart';
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const Application(),
-    const Profile(),
+    Profile(),
     const Setting(),
   ];
 
@@ -42,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: _pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 122, 190, 247),
+        backgroundColor: AppColors.primary,
         shape:
             ShapeBorder.lerp(const CircleBorder(), const CircleBorder(), 0.8),
         child: const Icon(
@@ -62,11 +63,11 @@ class _HomePageState extends State<HomePage> {
         icons: _iconList,
         activeIndex: _selectedIndex,
         gapLocation: GapLocation.center,
-        backgroundColor: const Color.fromARGB(255, 122, 190, 247),
+        backgroundColor: AppColors.primary,
         notchSmoothness: NotchSmoothness.verySmoothEdge,
         onTap: _onItemTapped,
         inactiveColor: Colors.white,
-        activeColor: Colors.black,
+        activeColor: const Color.fromARGB(255, 189, 174, 130),
       ),
     );
   }

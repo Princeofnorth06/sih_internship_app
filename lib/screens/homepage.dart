@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:sih_internship_app/componets/customhead_dis.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/screens/jobs.dart'; // Import for Timer
 
 class HomeScreen extends StatefulWidget {
@@ -48,11 +49,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 122, 190, 247),
+        backgroundColor: AppColors.primary,
         centerTitle: true,
         title: const Text(
           'Home',
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: AppColors.background),
         ),
       ),
       body: Column(
@@ -95,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: const HeadDes(
               head: "Job Applied",
-              des: 'Apply Now>>',
+              des: 'Apply Now->',
               icon: Icons.check_box_rounded,
             ),
           ),

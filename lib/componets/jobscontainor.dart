@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sih_internship_app/componets/icontext.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/main.dart';
 
 class Model extends StatelessWidget {
@@ -143,8 +144,7 @@ class Model extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: mq.width * 0.02),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  color:
-                      const Color.fromARGB(255, 1, 139, 253).withOpacity(0.2),
+                  color: AppColors.primary,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -153,7 +153,10 @@ class Model extends StatelessWidget {
                       Icons.timer_sharp,
                       size: mq.height * 0.02,
                     ),
-                    Text(differenceFormatted),
+                    Text(
+                      differenceFormatted,
+                      style: const TextStyle(color: AppColors.background),
+                    ),
                   ],
                 ),
               ),
@@ -178,12 +181,12 @@ class Model extends StatelessWidget {
                 onPressed: () {},
                 child: const Text(
                   'View details',
-                  style: TextStyle(color: Colors.blue),
+                  // style: TextStyle(color: Colors.blue),
                 ),
               ),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(3))),
                   onPressed: () {},

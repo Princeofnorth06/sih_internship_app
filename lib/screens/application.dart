@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 
 class Application extends StatefulWidget {
   const Application({super.key});
@@ -12,11 +13,14 @@ class _ApplicationState extends State<Application> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 122, 190, 247),
+        backgroundColor: AppColors.primary,
         centerTitle: true,
         title: const Text(
           'Application',
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: AppColors.background),
         ),
       ),
     );
