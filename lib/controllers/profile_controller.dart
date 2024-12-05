@@ -8,7 +8,7 @@ class ProfileController extends GetxController {
     email: 'johndoe@example.com',
     isPaid: true,
     profileData: ProfileData(
-      name: 'John Doe',
+      name: 'Prince',
       profileImage: 'assets/images/profile.jpeg',
       profileImagebackground: 'assets/images/profilebackground.png',
       address: 'San Francisco, CA',
@@ -28,7 +28,7 @@ class ProfileController extends GetxController {
       ),
       about:
           'A passionate developer with 5+ years of experience in full-stack development.',
-      skills: ['Flutter', 'Dart', 'React', 'Node.js'],
+      skills: ['Flutter', 'Dart', 'React', 'Node.js', "Communication"],
       experiences: [
         Experience(
           title: 'Software Engineer',
@@ -51,10 +51,18 @@ class ProfileController extends GetxController {
         Education(
           degree: 'BSc Computer Science',
           school: 'XYZ University',
-          feild: 'Computer Science',
+          field: 'Computer Science',
           startDate: DateTime(2014, 9),
           endDate: DateTime(2018, 5),
           description: 'Studied software development and data structures.',
+        ),
+        Education(
+          degree: 'BSc Computer Science',
+          school: 'XYertyukZ University',
+          field: 'Computer Science and Research',
+          startDate: DateTime(2019, 9),
+          endDate: DateTime(2024, 5),
+          description: 'Research.',
         ),
       ],
     ),
@@ -80,5 +88,28 @@ class ProfileController extends GetxController {
         profile?.profileData.profileImagebackground = image.path;
       });
     }
+  }
+
+  // Function to add a skill
+  void addSkill(String skill) {
+    if (!userProfile.value.profileData.skills.contains(skill)) {
+      userProfile.update((profile) {
+        profile?.profileData.skills.add(skill);
+      });
+    }
+  }
+
+  // Function to remove a skill
+  void removeSkill(String skill) {
+    userProfile.update((profile) {
+      profile?.profileData.skills.remove(skill);
+    });
+  }
+
+  // Function to save the profile
+  void saveProfile() {
+    // Save profile data to database or API
+    // Placeholder code to simulate saving
+    print('Profile saved: ${userProfile.value.profileData.name}');
   }
 }

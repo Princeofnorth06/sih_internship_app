@@ -8,6 +8,8 @@ import 'package:sih_internship_app/screens/auth/signup.dart';
 import 'package:sih_internship_app/screens/home_screen.dart';
 
 class Login extends StatefulWidget {
+  const Login({super.key});
+
   @override
   _LoginState createState() => _LoginState();
 }

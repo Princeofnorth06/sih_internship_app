@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sih_internship_app/controllers/profile_controller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
+import 'package:sih_internship_app/screens/profile/edit_profile.dart';
 
 class Profile extends StatelessWidget {
   final ProfileController controller = Get.put(ProfileController());
@@ -21,6 +22,16 @@ class Profile extends StatelessWidget {
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
                 color: AppColors.background)),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Get.to(() => EditProfile());
+              },
+              icon: const Icon(
+                Icons.edit,
+                color: AppColors.background,
+              ))
+        ],
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -256,7 +267,7 @@ class ProfileContent extends StatelessWidget {
           ...controller.userProfile.value.profileData.education.map((edu) {
             return ListTile(
               title: Text(edu.degree),
-              subtitle: Text('${edu.school} • ${edu.feild}'),
+              subtitle: Text('${edu.school} • ${edu.field}'),
               trailing: Text(
                 '${edu.startDate.year} - ${edu.endDate?.year ?? 'Present'}',
               ),

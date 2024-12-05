@@ -87,7 +87,7 @@ class Experience {
 class Education {
   String degree;
   String school;
-  String feild;
+  String field;
   DateTime startDate;
   DateTime? endDate;
   String description;
@@ -95,7 +95,7 @@ class Education {
   Education({
     required this.degree,
     required this.school,
-    required this.feild,
+    required this.field,
     required this.startDate,
     this.endDate,
     required this.description,

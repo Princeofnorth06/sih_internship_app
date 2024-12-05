@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
-import 'package:sih_internship_app/screens/auth/signup.dart';
+import 'package:sih_internship_app/screens/auth/loginstate.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -35,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
     Future.delayed(const Duration(seconds: 6), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => SignUp()),
+        MaterialPageRoute(builder: (context) => const AuthWrapper()),
       );
     });
   }

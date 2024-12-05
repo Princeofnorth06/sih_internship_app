@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 
 class Utils {
   static showtoast(String msg) {
@@ -8,7 +9,7 @@ class Utils {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         // timeInSecForIosWeb: 1,
-        backgroundColor: Colors.blue,
+        backgroundColor: AppColors.primary,
         textColor: Colors.white,
         fontSize: 16.0);
   }

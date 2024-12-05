@@ -8,8 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- Optional for older Android versions -->
 
     <application
-        android:name="$Internships"
-        android:label="your_app"
+        android:label="Rajasthan Connect"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">
         <!-- ... rest of the application configuration ... -->
