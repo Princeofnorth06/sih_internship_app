@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sih_internship_app/controllers/profile_controller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
+import 'package:sih_internship_app/screens/profile/create_profile.dart';
 import 'package:sih_internship_app/screens/profile/edit_profile.dart';
 
 class Profile extends StatelessWidget {
@@ -25,7 +26,7 @@ class Profile extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                Get.to(() => EditProfile());
+                Get.to(() => CreateProfile());
               },
               icon: const Icon(
                 Icons.edit,
@@ -110,22 +111,19 @@ class ProfileDetails extends StatelessWidget {
             children: [
               // Cover Image with tap gesture to pick image
               GestureDetector(
-                onTap: () => controller
-                    .updateProfileBackgroundImage(), // Open image picker
+                onTap: () =>
+                    controller.pickBackgroundImage(), // Open image picker
                 child: Obx(() => Container(
                       height: screenWidth > 800 ? 150 : 130,
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                        image: controller.userProfile.value.profileData
-                                .profileImagebackground
+                        image: controller.userProfile.value.bannerImageURL
                                 .contains('assets')
-                            ? AssetImage(controller.userProfile.value
-                                .profileData.profileImagebackground)
-                            : FileImage(File(controller
-                                .userProfile
-                                .value
-                                .profileData
-                                .profileImagebackground)) as ImageProvider,
+                            ? AssetImage(
+                                controller.userProfile.value.bannerImageURL)
+                            : FileImage(File(
+                                    controller.userProfile.value.userImageURL))
+                                as ImageProvider,
                         fit: BoxFit.cover,
                       )
                           // Show selected image
@@ -140,7 +138,7 @@ class ProfileDetails extends StatelessWidget {
                 left: screenWidth > 800 ? 40 : 30,
                 child: GestureDetector(
                   onTap: () =>
-                      controller.updateProfileImage(), // Open image picker
+                      controller.pickProfileImage(), // Open image picker
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -153,12 +151,12 @@ class ProfileDetails extends StatelessWidget {
                           radius: screenWidth > 800 ? 60 : 50,
                           backgroundColor: AppColors.background,
                           backgroundImage: controller
-                                  .userProfile.value.profileData.profileImage
+                                  .userProfile.value.userImageURL
                                   .contains('assets')
-                              ? AssetImage(controller
-                                  .userProfile.value.profileData.profileImage)
+                              ? AssetImage(
+                                  controller.userProfile.value.userImageURL)
                               : FileImage(File(controller.userProfile.value
-                                  .profileData.profileImage)) as ImageProvider,
+                                  .userImageURL)) as ImageProvider,
                         )),
                   ),
                 ),
@@ -172,20 +170,20 @@ class ProfileDetails extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  controller.userProfile.value.profileData.name,
+                  controller.userProfile.value.userName,
                   style: TextStyle(
                     fontSize: screenWidth > 800 ? 28 : 24, // Adjust font size
                     fontWeight: FontWeight.bold,
                     color: AppColors.background,
                   ),
                 ),
-                Text(
-                  controller.userProfile.value.profileData.role,
-                  style: const TextStyle(color: AppColors.background),
-                ),
+                // Text(
+                //   controller.userProfile.value.profileData.role,
+                //   style: const TextStyle(color: AppColors.background),
+                // ),
                 const SizedBox(height: 8),
                 Text(
-                  controller.userProfile.value.profileData.address,
+                  controller.userProfile.value.address,
                   style: const TextStyle(color: AppColors.background),
                 ),
                 const SizedBox(height: 16),
@@ -198,7 +196,7 @@ class ProfileDetails extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  controller.userProfile.value.profileData.about,
+                  controller.userProfile.value.about,
                   style: const TextStyle(color: AppColors.background),
                 ),
                 const SizedBox(height: 16),
@@ -213,7 +211,7 @@ class ProfileDetails extends StatelessWidget {
                 Wrap(
                   spacing: 8.0,
                   runSpacing: 4.0,
-                  children: controller.userProfile.value.profileData.skills
+                  children: controller.userProfile.value.skills
                       .map((skill) => Chip(
                             label: Text(
                               skill,
@@ -249,7 +247,7 @@ class ProfileContent extends StatelessWidget {
             'Experience',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          ...controller.userProfile.value.profileData.experiences.map((exp) {
+          ...controller.userProfile.value.experience.map((exp) {
             return ListTile(
               title: Text(exp.title),
               subtitle: Text('${exp.company} • ${exp.location}'),
@@ -264,7 +262,7 @@ class ProfileContent extends StatelessWidget {
             'Education',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          ...controller.userProfile.value.profileData.education.map((edu) {
+          ...controller.userProfile.value.education.map((edu) {
             return ListTile(
               title: Text(edu.degree),
               subtitle: Text('${edu.school} • ${edu.field}'),

@@ -32,46 +32,43 @@ class EditProfile extends StatelessWidget {
             children: [
               // Editable Profile Details
               TextFormField(
-                initialValue:
-                    profileController.userProfile.value.profileData.name,
+                initialValue: profileController.userProfile.value.userName,
                 decoration: const InputDecoration(labelText: 'Name'),
                 onChanged: (value) {
                   profileController.userProfile.update((val) {
-                    val?.profileData.name = value;
+                    val?.userName = value;
                   });
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                initialValue:
-                    profileController.userProfile.value.profileData.role,
-                decoration: const InputDecoration(labelText: 'Role'),
-                onChanged: (value) {
-                  profileController.userProfile.update((val) {
-                    val?.profileData.role = value;
-                  });
-                },
-              ),
+              // TextFormField(
+              //   initialValue:
+              //       profileController.userProfile.value.profileData.role,
+              //   decoration: const InputDecoration(labelText: 'Role'),
+              //   onChanged: (value) {
+              //     profileController.userProfile.update((val) {
+              //       val?.profileData.role = value;
+              //     });
+              //   },
+              // ),
               const SizedBox(height: 16),
               TextFormField(
-                initialValue:
-                    profileController.userProfile.value.profileData.address,
+                initialValue: profileController.userProfile.value.address,
                 decoration: const InputDecoration(labelText: 'Address'),
                 onChanged: (value) {
                   profileController.userProfile.update((val) {
-                    val?.profileData.address = value;
+                    val?.address = value;
                   });
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                initialValue:
-                    profileController.userProfile.value.profileData.about,
+                initialValue: profileController.userProfile.value.about,
                 decoration: const InputDecoration(labelText: 'About'),
                 maxLines: 3,
                 onChanged: (value) {
                   profileController.userProfile.update((val) {
-                    val?.profileData.about = value;
+                    val?.about = value;
                   });
                 },
               ),
@@ -88,13 +85,12 @@ class EditProfile extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 4,
                   children: [
-                    ...profileController.userProfile.value.profileData.skills
-                        .map((skill) {
+                    ...profileController.userProfile.value.skills.map((skill) {
                       return Chip(
                         label: Text(skill),
                         deleteIcon: const Icon(Icons.close),
                         onDeleted: () {
-                          profileController.removeSkill(skill);
+                          // profileController.removeSkill(skill);
                         },
                       );
                     }).toList(),
@@ -115,9 +111,8 @@ class EditProfile extends StatelessWidget {
               const SizedBox(height: 8),
               Obx(() {
                 return Column(
-                  children: profileController
-                      .userProfile.value.profileData.experiences
-                      .map((exp) {
+                  children:
+                      profileController.userProfile.value.experience.map((exp) {
                     return ListTile(
                       title: TextFormField(
                         initialValue: exp.title,
@@ -160,9 +155,8 @@ class EditProfile extends StatelessWidget {
               const SizedBox(height: 8),
               Obx(() {
                 return Column(
-                  children: profileController
-                      .userProfile.value.profileData.education
-                      .map((edu) {
+                  children:
+                      profileController.userProfile.value.education.map((edu) {
                     return ListTile(
                       title: TextFormField(
                         initialValue: edu.degree,
@@ -201,8 +195,8 @@ class EditProfile extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary),
                   onPressed: () {
-                    profileController
-                        .saveProfile(); // Implement the save function
+                    // profileController
+                    //     .saveProfile(); // Implement the save function
                   },
                   child: const Text(
                     'Save',
@@ -232,9 +226,9 @@ class EditProfile extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                if (skillController.text.isNotEmpty) {
-                  profileController.addSkill(skillController.text);
-                }
+                // if (skillController.text.isNotEmpty) {
+                //   profileController.addSkill(skillController.text);
+                // }
                 Get.back();
               },
               child: const Text('Add'),

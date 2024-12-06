@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sih_internship_app/controllers/profile_controller.dart';
+import 'package:sih_internship_app/controllers/userauth_controlller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/helpers/utils.dart';
 import 'package:sih_internship_app/main.dart';
@@ -16,9 +21,9 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
 
+  UserAuthController userAuthController = Get.put(UserAuthController());
+  ProfileController profileController = Get.put(ProfileController());
   Future<void> _signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -36,6 +41,17 @@ class _LoginState extends State<Login> {
 
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Retrieve the user ID (UUID) and email
+        String? userId = user.uid;
+        String? email = user.email;
+        log('uid: $userId');
+        profileController.setUid(userId);
+        profileController.emailController.text = email!;
+        // You can use userId and email as needed
+      }
 
       Utils.showtoast('Signed in with Google');
       Navigator.pushReplacement(
@@ -50,25 +66,43 @@ class _LoginState extends State<Login> {
   void _login() async {
     if (_formKey.currentState!.validate()) {
       try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
-        Utils.showtoast('Login Successful');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        bool verified = await userAuthController
+            .auth(profileController.emailController.text);
+        if (verified) {
+          UserCredential userCredential =
+              await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: profileController.emailController.text,
+            password: profileController.passwordController.text,
+          );
+          User? user = userCredential.user;
+
+          if (user != null) {
+            // Retrieve the user ID (UUID) and email
+            String? userId = user.uid;
+            String? email = user.email;
+            profileController.setUid(userId);
+            profileController.emailController.text = email!;
+            // You can use userId and email as needed
+          }
+          Utils.showtoast('Login Successful');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        } else {
+          Utils.showtoast('Failed to Login.');
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           Utils.showtoast('No user found for that email.');
         } else if (e.code == 'wrong-password') {
           Utils.showtoast('Wrong password provided.');
         } else {
+          log(e.message.toString());
           Utils.showtoast('Login Failed: ${e.message}');
         }
       } catch (e) {
+        log(e.toString());
         Utils.showtoast('Login Failed: $e');
       }
     }
@@ -114,7 +148,7 @@ class _LoginState extends State<Login> {
                     height: mq.height * 0.064,
                     width: mq.width * 0.75,
                     child: TextFormField(
-                      controller: _emailController,
+                      controller: profileController.emailController,
                       decoration: const InputDecoration(
                           labelText: 'Email',
                           border: OutlineInputBorder(
@@ -139,7 +173,7 @@ class _LoginState extends State<Login> {
                     height: mq.height * 0.064,
                     width: mq.width * 0.75,
                     child: TextFormField(
-                      controller: _passwordController,
+                      controller: profileController.passwordController,
                       decoration: const InputDecoration(
                           labelText: 'Password',
                           border: OutlineInputBorder(

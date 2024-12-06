@@ -1,13 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sih_internship_app/controllers/profile_controller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/helpers/utils.dart';
 import 'package:sih_internship_app/main.dart';
 import 'package:sih_internship_app/screens/home_screen.dart';
 import 'package:sih_internship_app/screens/auth/login.dart';
+import 'package:sih_internship_app/screens/profile/create_profile.dart';
 
 class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
   @override
   _SignUpState createState() => _SignUpState();
 }
@@ -18,6 +23,7 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final ProfileController profileController = Get.put(ProfileController());
 
   Future<void> _signInWithGoogle() async {
     try {
@@ -36,11 +42,21 @@ class _SignUpState extends State<SignUp> {
 
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Retrieve the user ID (UUID) and email
+        String userId = user.uid;
+        String? email = user.email;
+        profileController.setUid(userId);
+        profileController.emailController.text = email ?? "";
+        // You can use userId and email as needed
+      }
 
       Utils.showtoast('Signed in with Google');
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => CreateProfile()),
       );
     } on FirebaseAuthException catch (e) {
       Utils.showtoast('Google Sign-In Failed: ${e.message}');
@@ -55,10 +71,20 @@ class _SignUpState extends State<SignUp> {
           email: _emailController.text,
           password: _passwordController.text,
         );
+        User? user = userCredential.user;
+
+        if (user != null) {
+          // Retrieve the user ID (UUID) and email
+          String userId = user.uid;
+          String? email = user.email;
+          profileController.setUid(userId);
+          profileController.emailController.text = email ?? "";
+          // You can use userId and email as needed
+        }
         Utils.showtoast('Sign Up Successful');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => CreateProfile()),
         );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
