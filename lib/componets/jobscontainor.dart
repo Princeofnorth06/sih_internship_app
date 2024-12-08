@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sih_internship_app/componets/icontext.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/main.dart';
@@ -7,6 +8,7 @@ class Model extends StatelessWidget {
   const Model(
       {super.key,
       required this.title,
+      required this.mode,
       required this.location,
       required this.companyname,
       required this.companylogo,
@@ -17,7 +19,8 @@ class Model extends StatelessWidget {
       required this.lasttoapply,
       required this.dateposted});
   final String title;
-  final List<String> location;
+  final String location;
+  final String mode;
   final String companyname;
   final String companylogo;
   final bool iswfh;
@@ -30,16 +33,24 @@ class Model extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-
-    Duration difference = now.difference(lasttoapply);
+    DateTime? postedon;
+    if (dateposted != null && dateposted.isNotEmpty) {
+      try {
+        postedon = DateTime.parse(dateposted);
+      } catch (e) {
+        print('Error parsing date: $e');
+      }
+    }
+    Duration difference = now.difference(postedon!);
 
     String differenceFormatted = formatDuration(difference);
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: mq.height * 0.006),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       color: Colors.white,
       alignment: Alignment.topLeft,
-      padding: EdgeInsets.all(mq.width * 0.03),
+      padding: EdgeInsets.only(
+          left: mq.width * 0.03, right: mq.width * 0.03, top: mq.width * 0.03),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -77,7 +88,7 @@ class Model extends StatelessWidget {
               SizedBox(
                   width: mq.width * 0.2,
                   height: mq.height * 0.1,
-                  child: Image.asset("assets/images/icon.png"))
+                  child: Image.network(companylogo))
             ],
           ),
           SizedBox(
@@ -97,7 +108,7 @@ class Model extends StatelessWidget {
               SizedBox(
                   width: mq.width * 0.8,
                   child: Text(
-                    location.isEmpty ? "Work From Home" : location.join(' , '),
+                    location,
                     style: const TextStyle(fontWeight: FontWeight.w300),
                   ))
             ],
@@ -105,17 +116,9 @@ class Model extends StatelessWidget {
           SizedBox(
             height: mq.height * 0.015,
           ),
-          Row(
-            children: [
-              const IconText(
-                text: "Starts Immediately",
-                icons: Icons.play_circle_outline,
-              ),
-              IconText(
-                text: duration,
-                icons: Icons.calendar_month_outlined,
-              ),
-            ],
+          IconText(
+            text: mode,
+            icons: Icons.work,
           ),
           SizedBox(
             height: mq.height * 0.015,
@@ -148,10 +151,15 @@ class Model extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Icon(
                       Icons.timer_sharp,
                       size: mq.height * 0.02,
+                      color: AppColors.background,
+                    ),
+                    SizedBox(
+                      width: mq.width * 0.01,
                     ),
                     Text(
                       differenceFormatted,
@@ -161,7 +169,8 @@ class Model extends StatelessWidget {
                 ),
               ),
               SizedBox(width: mq.width * 0.1),
-              Text('Date Posted : $dateposted')
+              Text(
+                  'Apply till : ${DateFormat('yyyy-MM-dd').format(lasttoapply)}')
             ],
           ),
           SizedBox(
@@ -170,29 +179,6 @@ class Model extends StatelessWidget {
           Container(
             height: mq.height * 0.004,
             color: Colors.grey.shade300,
-          ),
-          SizedBox(
-            height: mq.height * 0.015,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'View details',
-                  // style: TextStyle(color: Colors.blue),
-                ),
-              ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3))),
-                  onPressed: () {},
-                  child: const Text('    Apply Now    ',
-                      style: TextStyle(color: Colors.white)))
-            ],
           ),
         ],
       ),

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sih_internship_app/controllers/profile_controller.dart';
@@ -26,7 +25,7 @@ class Profile extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                Get.to(() => CreateProfile());
+                Get.to(() => EditProfile());
               },
               icon: const Icon(
                 Icons.edit,
@@ -104,41 +103,40 @@ class ProfileDetails extends StatelessWidget {
     return Card(
       color: AppColors.greyDark,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.center,
             children: [
-              // Cover Image with tap gesture to pick image
               GestureDetector(
-                onTap: () =>
-                    controller.pickBackgroundImage(), // Open image picker
-                child: Obx(() => Container(
+                  onTap: () =>
+                      controller.pickBackgroundImage(), // Open image picker
+                  child: Obx(
+                    () => Container(
                       height: screenWidth > 800 ? 150 : 130,
                       decoration: BoxDecoration(
-                          image: DecorationImage(
-                        image: controller.userProfile.value.bannerImageURL
-                                .contains('assets')
-                            ? AssetImage(
-                                controller.userProfile.value.bannerImageURL)
-                            : FileImage(File(
-                                    controller.userProfile.value.userImageURL))
-                                as ImageProvider,
-                        fit: BoxFit.cover,
-                      )
-                          // Show selected image
-
-                          ),
-                    )),
-              ),
-
-              // Profile Image with tap gesture to pick image
+                        color: AppColors.background,
+                        image: DecorationImage(
+                          image: controller.backgroundImage.value != null &&
+                                  controller
+                                      .backgroundImage.value!.path.isNotEmpty
+                              ? FileImage(controller.backgroundImage
+                                  .value!) // Only use FileImage if the path is valid
+                              : const AssetImage('assets/images/job.jpeg')
+                                  as ImageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  )),
               Positioned(
                 bottom: -50,
                 left: screenWidth > 800 ? 40 : 30,
                 child: GestureDetector(
-                  onTap: () =>
-                      controller.pickProfileImage(), // Open image picker
+                  onTap: () => controller
+                      .pickProfileImage()
+                      .then((value) {}), // Open image picker
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -147,17 +145,18 @@ class ProfileDetails extends StatelessWidget {
                         width: screenWidth > 800 ? 4.0 : 3.0,
                       ),
                     ),
-                    child: Obx(() => CircleAvatar(
-                          radius: screenWidth > 800 ? 60 : 50,
-                          backgroundColor: AppColors.background,
-                          backgroundImage: controller
-                                  .userProfile.value.userImageURL
-                                  .contains('assets')
-                              ? AssetImage(
-                                  controller.userProfile.value.userImageURL)
-                              : FileImage(File(controller.userProfile.value
-                                  .userImageURL)) as ImageProvider,
-                        )),
+                    child: Obx(
+                      () => CircleAvatar(
+                        radius: screenWidth > 800 ? 60 : 50,
+                        backgroundColor: AppColors.background,
+                        backgroundImage: controller.profileImage.value !=
+                                    null &&
+                                controller.profileImage.value!.path.isNotEmpty
+                            ? NetworkImage(controller.profile.value)
+                            : const AssetImage('assets/images/job.jpeg')
+                                as ImageProvider,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -170,20 +169,18 @@ class ProfileDetails extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  controller.userProfile.value.userName,
+                  controller.userProfile.value.payload.userName ??
+                      'No info available',
                   style: TextStyle(
                     fontSize: screenWidth > 800 ? 28 : 24, // Adjust font size
                     fontWeight: FontWeight.bold,
                     color: AppColors.background,
                   ),
                 ),
-                // Text(
-                //   controller.userProfile.value.profileData.role,
-                //   style: const TextStyle(color: AppColors.background),
-                // ),
                 const SizedBox(height: 8),
                 Text(
-                  controller.userProfile.value.address,
+                  controller.userProfile.value.payload.address ??
+                      'No info available',
                   style: const TextStyle(color: AppColors.background),
                 ),
                 const SizedBox(height: 16),
@@ -196,7 +193,9 @@ class ProfileDetails extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  controller.userProfile.value.about,
+                  controller.userProfile.value.payload.about != ""
+                      ? controller.userProfile.value.payload.about
+                      : 'Add',
                   style: const TextStyle(color: AppColors.background),
                 ),
                 const SizedBox(height: 16),
@@ -208,20 +207,25 @@ class ProfileDetails extends StatelessWidget {
                     color: AppColors.background,
                   ),
                 ),
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 4.0,
-                  children: controller.userProfile.value.skills
-                      .map((skill) => Chip(
-                            label: Text(
-                              skill,
-                              style:
-                                  const TextStyle(color: AppColors.background),
-                            ),
-                            backgroundColor: AppColors.primary,
-                          ))
-                      .toList(),
-                ),
+                controller.userProfile.value.payload.skills.isNotEmpty
+                    ? Wrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        children: controller.userProfile.value.payload.skills
+                            .map((skill) => Chip(
+                                  label: Text(
+                                    skill,
+                                    style: const TextStyle(
+                                        color: AppColors.background),
+                                  ),
+                                  backgroundColor: AppColors.primary,
+                                ))
+                            .toList(),
+                      )
+                    : const Text(
+                        'No skills available',
+                        style: TextStyle(color: AppColors.background),
+                      ),
               ],
             ),
           ),
@@ -247,31 +251,45 @@ class ProfileContent extends StatelessWidget {
             'Experience',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          ...controller.userProfile.value.experience.map((exp) {
-            return ListTile(
-              title: Text(exp.title),
-              subtitle: Text('${exp.company} • ${exp.location}'),
-              trailing: Text(
-                '${exp.startDate.year} - ${exp.endDate?.year ?? 'Present'}',
-              ),
-              isThreeLine: true,
-            );
-          }).toList(),
+          controller.userProfile.value.payload.experience.isNotEmpty
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: controller.userProfile.value.payload.experience
+                      .map((exp) {
+                    return ListTile(
+                      title: Text(exp["title"] ?? 'No info available'),
+                      subtitle: Text(
+                          '${exp["company"] ?? 'No info available'} • ${exp["locationType"] ?? 'No info available'}'),
+                      trailing: Text(
+                        '${exp["startDateYear"] ?? 'N/A'} - ${exp["endDateYear"] ?? 'Present'}',
+                      ),
+                      isThreeLine: true,
+                    );
+                  }).toList(),
+                )
+              : const Text('No experience available'),
           const SizedBox(height: 16),
           const Text(
             'Education',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          ...controller.userProfile.value.education.map((edu) {
-            return ListTile(
-              title: Text(edu.degree),
-              subtitle: Text('${edu.school} • ${edu.field}'),
-              trailing: Text(
-                '${edu.startDate.year} - ${edu.endDate?.year ?? 'Present'}',
-              ),
-              isThreeLine: true,
-            );
-          }).toList(),
+          controller.userProfile.value.payload.education.isNotEmpty
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:
+                      controller.userProfile.value.payload.education.map((edu) {
+                    return ListTile(
+                      title: Text(edu.degree ?? 'No info available'),
+                      subtitle: Text(
+                          '${edu.school ?? 'No info available'} • ${edu.field ?? 'No info available'}'),
+                      trailing: Text(
+                        '${edu.startDate?.year ?? 'N/A'} - ${edu.endDate?.year ?? 'Present'}',
+                      ),
+                      isThreeLine: true,
+                    );
+                  }).toList(),
+                )
+              : const Text('No education available'),
         ],
       ),
     );

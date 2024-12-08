@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,8 @@ class CreateProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
+       
         centerTitle: true,
         backgroundColor: AppColors.primary,
         title: const Text(
@@ -96,7 +99,7 @@ class CreateProfile extends StatelessWidget {
                 decoration: const InputDecoration(labelText: 'Name'),
                 onChanged: (value) {
                   profileController.userProfile.update((val) {
-                    val?.userName = value;
+                    val?.payload.userName = value;
                   });
                 },
               ),
@@ -106,8 +109,8 @@ class CreateProfile extends StatelessWidget {
                 controller: profileController.emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
                 onChanged: (value) {
-                  profileController.userProfile.update((val) {
-                    val?.email = value;
+                  profileController.userProfile!.update((val) {
+                    val?.payload.email = value;
                   });
                 },
               ),
@@ -246,12 +249,13 @@ class CreateProfile extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary),
                   onPressed: () async {
+                    log(profileController.profileImage.toString());
                     profileController
                         .createUser(
                             profileController.name.text,
-                            profileController.uid!.value,
+                            profileController.uid.value,
                             profileController.emailController.text,
-                            profileController.profileImage.toString())
+                            profileController.profileImage.value ?? File(""))
                         .then((value) {
                       Get.to(() => const HomePage());
                     });

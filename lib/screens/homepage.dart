@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import 'dart:async';
 
 import 'package:sih_internship_app/componets/customhead_dis.dart';
+import 'package:sih_internship_app/controllers/job_controller.dart';
 import 'package:sih_internship_app/controllers/profile_controller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
-import 'package:sih_internship_app/screens/jobs.dart'; // Import for Timer
+import 'package:sih_internship_app/screens/jobs/jobs.dart'; // Import for Timer
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _startAutoSlide();
     Get.put(ProfileController())
         .getUserById(Get.put(ProfileController()).uid.value);
+    Get.put(JobController()).getAllJobs();
   }
 
   void _startAutoSlide() {

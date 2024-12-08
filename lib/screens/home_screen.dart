@@ -3,7 +3,7 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/screens/application.dart';
 import 'package:sih_internship_app/screens/homepage.dart';
-import 'package:sih_internship_app/screens/jobs.dart';
+import 'package:sih_internship_app/screens/jobs/jobs.dart';
 import 'package:sih_internship_app/screens/profile/profile.dart';
 import 'package:sih_internship_app/screens/setting.dart';
 
@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    const Application(),
+    const Applications(),
     Profile(),
     const Setting(),
   ];
