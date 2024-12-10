@@ -112,142 +112,143 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,
-      // appBar: AppBar(
-      //   centerTitle: true,
-      //   backgroundColor: const Color.fromARGB(255, 122, 190, 247),
-      //   title: const Text(
-      //     'Login',
-      //     style: TextStyle(fontWeight: FontWeight.bold),
-      //   ),
-      // ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Center(
-            child: Container(
-              height: mq.height * 0.5,
-              width: mq.width * 0.8,
-              padding: EdgeInsets.symmetric(horizontal: mq.height * 0.02),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Login',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  SizedBox(
-                    height: mq.height * 0.064,
-                    width: mq.width * 0.75,
-                    child: TextFormField(
-                      controller: profileController.emailController,
-                      decoration: const InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)))),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
-                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                            .hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      },
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/landing_background.jpg')),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Center(
+              child: Container(
+                height: mq.height * 0.5,
+                width: mq.width * 0.8,
+                padding: EdgeInsets.symmetric(horizontal: mq.height * 0.02),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Login',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  SizedBox(
-                    height: mq.height * 0.064,
-                    width: mq.width * 0.75,
-                    child: TextFormField(
-                      controller: profileController.passwordController,
-                      decoration: const InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)))),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        } else if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
-                        }
-                        return null;
-                      },
+                    const SizedBox(
+                      height: 15,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
+                    SizedBox(
+                      height: mq.height * 0.064,
+                      width: mq.width * 0.75,
+                      child: TextFormField(
+                        controller: profileController.emailController,
+                        decoration: const InputDecoration(
+                            labelText: 'Email',
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)))),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email address';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    SizedBox(
+                      height: mq.height * 0.064,
+                      width: mq.width * 0.75,
+                      child: TextFormField(
+                        controller: profileController.passwordController,
+                        decoration: const InputDecoration(
+                            labelText: 'Password',
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)))),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          } else if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          fixedSize: Size(mq.width * 0.75, mq.height * 0.064),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5))),
+                      onPressed: _login,
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
+                    SizedBox(
+                      height: mq.height * 0.015,
+                    ),
+                    Row(
+                      children: [
+                        const Text('New User? '),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignUp()));
+                            },
+                            child: const Text('SignUp')),
+                      ],
+                    ),
+                    SizedBox(
+                      height: mq.height * 0.015,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         fixedSize: Size(mq.width * 0.75, mq.height * 0.064),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                    onPressed: _login,
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                            borderRadius: BorderRadius.circular(5)),
+                      ),
+                      onPressed: _signInWithGoogle,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset('assets/images/google.png',
+                              height:
+                                  24), // Ensure you add a Google logo in assets
+                          const SizedBox(width: 10),
+                          const Text(
+                            'Sign In with Google',
+                            style: TextStyle(
+                                color: AppColors.background, fontSize: 18),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: mq.height * 0.015,
-                  ),
-                  Row(
-                    children: [
-                      const Text('New User? '),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignUp()));
-                          },
-                          child: const Text('SignUp')),
-                    ],
-                  ),
-                  SizedBox(
-                    height: mq.height * 0.015,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      fixedSize: Size(mq.width * 0.75, mq.height * 0.064),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                    ),
-                    onPressed: _signInWithGoogle,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset('assets/images/google.png',
-                            height:
-                                24), // Ensure you add a Google logo in assets
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Sign In with Google',
-                          style: TextStyle(
-                              color: AppColors.background, fontSize: 18),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

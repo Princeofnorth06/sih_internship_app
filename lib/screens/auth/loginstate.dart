@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sih_internship_app/screens/auth/login.dart';
 import 'package:sih_internship_app/screens/home_screen.dart';
+import 'package:sih_internship_app/screens/landing_page.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -16,7 +17,7 @@ class AuthWrapper extends StatelessWidget {
           User? user = snapshot.data;
           if (user == null) {
             // User is NOT logged in
-            return const Login();
+            return const LandingPage(); //Login();
           } else {
             // User IS logged in
             return const HomePage();

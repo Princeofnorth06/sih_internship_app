@@ -6,4 +6,5 @@ class ApiRoutes {
   static const getUserById = "$serverUrl/api/v1/user/id";
   static const edit = "$serverUrl/api/v1/user";
   static const getAllJobs = "$serverUrl/api/v1/hub/jobs";
+  static const getAllJobById = "$serverUrl/api/v1/hub/job";
 }

@@ -9,7 +9,8 @@ import 'package:sih_internship_app/reopos/userauth_repo.dart';
 
 class JobController extends GetxController {
   // Assuming you have the JobResponse class properly defined
-  Rx<JobResponse> jobs = JobResponse().obs; // Initialize Rx<JobResponse>
+  Rx<JobResponse> jobs = JobResponse().obs;
+  // Initialize Rx<JobResponse>
 
 // Job repository instance
   JobRepo userauthRepo = JobRepo();
@@ -21,5 +22,11 @@ class JobController extends GetxController {
     if (response != null) {
       jobs.value = response;
     }
+  }
+
+  Future<Job> getAllJobById(String id) async {
+    final response = await userauthRepo.getAllJobById(id);
+
+    return response;
   }
 }
