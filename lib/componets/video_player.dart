@@ -15,13 +15,13 @@ class VideoPlayerWidget extends StatefulWidget {
   });
 
   @override
-  // ignore: library_private_types_in_public_api
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
+  bool _isPlaying = false;
 
   @override
   void initState() {
@@ -36,7 +36,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           );
         });
       });
-    setState(() {});
   }
 
   @override
@@ -55,30 +54,34 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         Stack(
           alignment: Alignment.center,
           children: [
-            Image.network(
-              widget.thumbnailUrl,
-              height: 200,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            IconButton(
-              icon: const Icon(Icons.play_circle_filled,
-                  size: 64, color: Colors.white),
-              onPressed: () {
-                // Navigate to video player screen or open inline player
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    child: AspectRatio(
-                      aspectRatio: _videoPlayerController.value.aspectRatio,
-                      child: _chewieController != null
-                          ? Chewie(controller: _chewieController!)
-                          : Center(child: CircularProgressIndicator()),
-                    ),
-                  ),
-                );
-              },
-            ),
+            if (!_isPlaying) // Show thumbnail if video is not playing
+              Image.network(
+                widget.thumbnailUrl,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              )
+            else if (_chewieController != null &&
+                _videoPlayerController.value.isInitialized)
+              AspectRatio(
+                aspectRatio: _videoPlayerController.value.aspectRatio,
+                child: Chewie(controller: _chewieController!),
+              )
+            else
+              const Center(child: CircularProgressIndicator()),
+
+            // Play button on the thumbnail
+            if (!_isPlaying)
+              IconButton(
+                icon: const Icon(Icons.play_circle_filled,
+                    size: 64, color: Colors.white),
+                onPressed: () {
+                  setState(() {
+                    _isPlaying = true; // Start playing the video
+                    _chewieController?.play(); // Play video
+                  });
+                },
+              ),
           ],
         ),
       ],

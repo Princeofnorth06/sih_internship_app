@@ -1,46 +1,30 @@
-import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sih_internship_app/controllers/profile_controller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
+import 'package:sih_internship_app/main.dart';
 import 'package:sih_internship_app/screens/auth/login.dart';
-import 'package:sih_internship_app/screens/profile/create_profile.dart';
 import 'package:sih_internship_app/screens/profile/edit_profile.dart';
 
-class Profile extends StatelessWidget {
-  final ProfileController controller = Get.put(ProfileController());
+class Profile extends StatefulWidget {
+  const Profile({super.key});
 
-  Profile({super.key});
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  ProfileController profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.primary,
-        title: const Text('Profile',
-            style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                color: AppColors.background)),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Get.to(() => EditProfile());
-              },
-              icon: const Icon(
-                Icons.edit,
-                color: AppColors.background,
-              ))
-        ],
-      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.background,
         onPressed: () {
           FirebaseAuth.instance.signOut().then((value) {
-            Get.to(const Login());
+            Get.offAll(const Login()); // Use Get.offAll for proper navigation
           });
         },
         child: const Icon(
@@ -48,264 +32,285 @@ class Profile extends StatelessWidget {
           color: AppColors.primary,
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 800) {
-            return WideProfileLayout(controller: controller);
-          } else {
-            return NarrowProfileLayout(controller: controller);
-          }
-        },
-      ),
-    );
-  }
-}
-
-class WideProfileLayout extends StatelessWidget {
-  final ProfileController controller;
-
-  const WideProfileLayout({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 2,
-          child: Obx(
-            () => ProfileDetails(controller: controller),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Obx(
-            () => ProfileContent(controller: controller),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class NarrowProfileLayout extends StatelessWidget {
-  final ProfileController controller;
-
-  const NarrowProfileLayout({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ProfileDetails(controller: controller),
-          ProfileContent(controller: controller),
+      backgroundColor: AppColors.primary,
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                Get.to(() => EditProfile());
+              },
+              icon: const Icon(Icons.edit))
         ],
+        centerTitle: true,
+        title: const Text(
+          'Profile',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-    );
-  }
-}
-
-class ProfileDetails extends StatelessWidget {
-  final ProfileController controller;
-
-  const ProfileDetails({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return Card(
-      color: AppColors.greyDark,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GestureDetector(
-                  onTap: () =>
-                      controller.pickBackgroundImage(), // Open image picker
-                  child: Obx(
-                    () => Container(
-                      height: screenWidth > 800 ? 150 : 130,
-                      decoration: BoxDecoration(
-                        color: AppColors.background,
-                        image: DecorationImage(
-                          image: controller.backgroundImage.value != null &&
-                                  controller
-                                      .backgroundImage.value!.path.isNotEmpty
-                              ? FileImage(controller.backgroundImage
-                                  .value!) // Only use FileImage if the path is valid
-                              : const AssetImage('assets/images/job.jpeg')
-                                  as ImageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  )),
-              Positioned(
-                bottom: -50,
-                left: screenWidth > 800 ? 40 : 30,
-                child: GestureDetector(
-                  onTap: () => controller
-                      .pickProfileImage()
-                      .then((value) {}), // Open image picker
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.primary,
-                        width: screenWidth > 800 ? 4.0 : 3.0,
-                      ),
-                    ),
-                    child: Obx(
-                      () => CircleAvatar(
-                        radius: screenWidth > 800 ? 60 : 50,
-                        backgroundColor: AppColors.background,
-                        backgroundImage: controller.profileImage.value !=
-                                    null &&
-                                controller.profileImage.value!.path.isNotEmpty
-                            ? NetworkImage(controller.profile.value)
-                            : const AssetImage('assets/images/job.jpeg')
-                                as ImageProvider,
-                      ),
+              // Profile Image
+              Stack(
+                children: [
+                  Obx(() => CircleAvatar(
+                        radius: 60,
+                        backgroundImage:
+                            profileController.backgroundImage.value != null &&
+                                    profileController
+                                        .backgroundImage.value!.path.isNotEmpty
+                                ? FileImage(
+                                    profileController.backgroundImage.value!)
+                                : null,
+                        child: profileController.backgroundImage.value == null
+                            ? const Icon(
+                                Icons.person,
+                                size: 55,
+                                color: AppColors.background,
+                              )
+                            : null,
+                      )),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        // Handle profile image change
+                      },
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 50),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  controller.userProfile.value.payload.userName ??
-                      'No info available',
-                  style: TextStyle(
-                    fontSize: screenWidth > 800 ? 28 : 24, // Adjust font size
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.background,
+              const SizedBox(height: 20),
+
+              // Name and Title
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    profileController.name.text,
+                    style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.background),
                   ),
+                  if (profileController.titleController.text.isNotEmpty)
+                    Text(
+                      profileController.titleController.text,
+                      style: const TextStyle(
+                          fontSize: 16, color: AppColors.background),
+                    ),
+                ],
+              ),
+
+              // Company and Location
+
+              if (profileController
+                  .userProfile.value.payload.address.isNotEmpty)
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, color: AppColors.background),
+                    const SizedBox(width: 5),
+                    Text(
+                      profileController.userProfile.value.payload.address,
+                      style: const TextStyle(color: AppColors.background),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  controller.userProfile.value.payload.address ??
-                      'No info available',
-                  style: const TextStyle(color: AppColors.background),
-                ),
-                const SizedBox(height: 16),
+
+              const SizedBox(height: 20),
+
+              // About Me
+              if (profileController
+                  .userProfile.value.payload.about.isNotEmpty) ...[
                 const Text(
-                  'About',
+                  'About Me',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.background,
-                  ),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.background),
                 ),
-                Text(
-                  controller.userProfile.value.payload.about != ""
-                      ? controller.userProfile.value.payload.about
-                      : 'Add',
-                  style: const TextStyle(color: AppColors.background),
+                const SizedBox(height: 10),
+                Obx(() => Text(
+                      profileController.userProfile.value.payload.about,
+                      style: const TextStyle(color: AppColors.background),
+                    )),
+                const SizedBox(height: 20),
+              ],
+
+              // Experience
+              if (profileController
+                  .userProfile.value.payload.experience.isNotEmpty) ...[
+                const Text(
+                  'Experience',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.background),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
+                Obx(() => ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: profileController
+                          .userProfile.value.payload.experience.length,
+                      itemBuilder: (context, index) {
+                        // Display experience details here
+                      },
+                    )),
+              ],
+
+              const SizedBox(height: 20),
+
+              // Education
+              if (profileController.education.value.isNotEmpty) ...[
+                const Text(
+                  'Education',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.background),
+                ),
+                const SizedBox(height: 10),
+                Obx(() => ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: profileController.education.value.length,
+                      itemBuilder: (context, index) {
+                        // Display education details here
+                      },
+                    )),
+              ],
+
+              const SizedBox(height: 20),
+
+              // Skills
+              if (profileController.skills.value.isNotEmpty) ...[
                 const Text(
                   'Skills',
                   style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.background),
+                ),
+                const SizedBox(height: 10),
+                Obx(() => Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children:
+                          profileController.skills.value.map<Widget>((skill) {
+                        return Chip(
+                          label: Text(
+                            '$skill',
+                            style: const TextStyle(color: AppColors.primary),
+                          ),
+                        );
+                      }).toList(),
+                    )),
+              ],
+
+              const SizedBox(height: 20),
+
+              // Contact
+              const Text(
+                'Contact',
+                style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.background),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.email,
                     color: AppColors.background,
                   ),
+                  const SizedBox(width: 5),
+                  Text(
+                    profileController.emailController.text,
+                    style: const TextStyle(color: AppColors.background),
+                  ),
+                ],
+              ),
+              if (profileController.phone.value.isNotEmpty)
+                const SizedBox(height: 5),
+              if (profileController.phone.value.isNotEmpty)
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.phone,
+                      color: AppColors.background,
+                    ),
+                    const SizedBox(width: 5),
+                    SizedBox(
+                      width: mq.width * 0.6,
+                      child: Text(
+                        profileController.phone.value,
+                        style: const TextStyle(color: AppColors.background),
+                      ),
+                    ),
+                  ],
                 ),
-                controller.userProfile.value.payload.skills.isNotEmpty
-                    ? Wrap(
-                        spacing: 8.0,
-                        runSpacing: 4.0,
-                        children: controller.userProfile.value.payload.skills
-                            .map((skill) => Chip(
-                                  label: Text(
-                                    skill,
-                                    style: const TextStyle(
-                                        color: AppColors.background),
-                                  ),
-                                  backgroundColor: AppColors.primary,
-                                ))
-                            .toList(),
-                      )
-                    : const Text(
-                        'No skills available',
-                        style: TextStyle(color: AppColors.background),
+              if (profileController.linkedIn.value.isNotEmpty)
+                const SizedBox(height: 5),
+              if (profileController.linkedIn.value.isNotEmpty)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.link, color: AppColors.background),
+                    const SizedBox(width: 5),
+                    SizedBox(
+                      width: mq.width * 0.8,
+                      child: Text(
+                        profileController.linkedIn.value,
+                        style: const TextStyle(color: AppColors.background),
                       ),
+                    ),
+                  ],
+                ),
+              if (profileController.github.value.isNotEmpty)
+                const SizedBox(height: 5),
+              if (profileController.github.value.isNotEmpty)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.code, color: AppColors.background),
+                    const SizedBox(width: 5),
+                    SizedBox(
+                      width: mq.width * 0.8,
+                      child: Text(
+                        profileController.github.value,
+                        style: const TextStyle(color: AppColors.background),
+                      ),
+                    ),
+                  ],
+                ),
+
+              const SizedBox(height: 20),
+
+              // Portfolio (Optional)
+              if (profileController.portfolio.value.isNotEmpty) ...[
+                const Text(
+                  'Portfolio',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.background),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  profileController.portfolio.value,
+                  style: const TextStyle(color: AppColors.background),
+                ),
               ],
-            ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class ProfileContent extends StatelessWidget {
-  final ProfileController controller;
-
-  const ProfileContent({Key? key, required this.controller}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Experience',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          controller.userProfile.value.payload.experience.isNotEmpty
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: controller.userProfile.value.payload.experience
-                      .map((exp) {
-                    return ListTile(
-                      title: Text(exp["title"] ?? 'No info available'),
-                      subtitle: Text(
-                          '${exp["company"] ?? 'No info available'} • ${exp["locationType"] ?? 'No info available'}'),
-                      trailing: Text(
-                        '${exp["startDateYear"] ?? 'N/A'} - ${exp["endDateYear"] ?? 'Present'}',
-                      ),
-                      isThreeLine: true,
-                    );
-                  }).toList(),
-                )
-              : const Text('No experience available'),
-          const SizedBox(height: 16),
-          const Text(
-            'Education',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          controller.userProfile.value.payload.education.isNotEmpty
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:
-                      controller.userProfile.value.payload.education.map((edu) {
-                    return ListTile(
-                      title: Text(edu.degree ?? 'No info available'),
-                      subtitle: Text(
-                          '${edu.school ?? 'No info available'} • ${edu.field ?? 'No info available'}'),
-                      trailing: Text(
-                        '${edu.startDate?.year ?? 'N/A'} - ${edu.endDate?.year ?? 'Present'}',
-                      ),
-                      isThreeLine: true,
-                    );
-                  }).toList(),
-                )
-              : const Text('No education available'),
-        ],
+        ),
       ),
     );
   }
