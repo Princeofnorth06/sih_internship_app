@@ -5,7 +5,7 @@ import 'package:sih_internship_app/screens/application.dart';
 import 'package:sih_internship_app/screens/homepage.dart';
 import 'package:sih_internship_app/screens/jobs/jobs.dart';
 import 'package:sih_internship_app/screens/profile/profile.dart';
-import 'package:sih_internship_app/screens/setting.dart';
+import 'package:sih_internship_app/screens/course.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
     const HomeScreen(),
     const Applications(),
     Profile(),
-    const Setting(),
+    const Course(),
   ];
 
   // Icons for the bottom navigation bar
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
     Icons.home,
     Icons.mail,
     Icons.person,
-    Icons.settings,
+    Icons.play_circle,
   ];
 
   void _onItemTapped(int index) {
@@ -41,14 +41,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.primary,
       body: _pages[_selectedIndex],
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.background,
         shape:
             ShapeBorder.lerp(const CircleBorder(), const CircleBorder(), 0.8),
         child: const Icon(
           Icons.badge,
-          color: Colors.white,
+          color: Colors.black,
         ),
         onPressed: () {
           // Navigate to the Jobs page when the FAB is clicked
@@ -63,11 +64,11 @@ class _HomePageState extends State<HomePage> {
         icons: _iconList,
         activeIndex: _selectedIndex,
         gapLocation: GapLocation.center,
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.background,
         notchSmoothness: NotchSmoothness.verySmoothEdge,
         onTap: _onItemTapped,
-        inactiveColor: Colors.white,
-        activeColor: const Color.fromARGB(255, 189, 174, 130),
+        inactiveColor: Colors.grey,
+        activeColor: Colors.black,
       ),
     );
   }

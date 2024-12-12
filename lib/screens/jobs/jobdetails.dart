@@ -2,14 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
+import 'package:sih_internship_app/helpers/utils.dart';
 import 'package:sih_internship_app/models/job.dart';
+import 'package:sih_internship_app/screens/application.dart';
 import 'package:sih_internship_app/screens/jobs/company_details.dart';
 import 'package:sih_internship_app/screens/jobs/jobs.dart';
 
-class JobDetailPage extends StatelessWidget {
+class JobDetailPage extends StatefulWidget {
   final Job job;
 
   const JobDetailPage({super.key, required this.job});
+
+  @override
+  State<JobDetailPage> createState() => _JobDetailPageState();
+}
+
+class _JobDetailPageState extends State<JobDetailPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    jobController.isAppling.value = widget.job.application!
+        .any((app) => app.id == profileController.uid.value);
+    print(jobController.isAppling.value);
+    //jobController.isAppling.value=
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,79 +44,156 @@ class JobDetailPage extends StatelessWidget {
             },
           ),
           centerTitle: true,
-          title: Text(
-            job.title ?? "Job Title",
-            style: const TextStyle(color: AppColors.background),
+          title: const Text(
+            "Job Details",
+            style: TextStyle(color: AppColors.background),
           ),
           backgroundColor: AppColors.primary,
         ),
-        body: job.title != null
+        body: widget.job.title != null
             ? SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Company Logo and Name
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          job.hub?.logo != null && job.hub!.logo != ''
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              widget.job.title != null && widget.job.title != ""
+                                  ? Text(
+                                      widget.job.title!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    )
+                                  : const Text('Unknown',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20)),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  widget.job.hub!.name != null &&
+                                          widget.job.hub!.name != ""
+                                      ? Text("${widget.job.hub!.name!},",
+                                          style: const TextStyle(fontSize: 13))
+                                      : const Text("Unknown,",
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.black54)),
+                                  const Icon(
+                                    Icons.location_on,
+                                    size: 15,
+                                    color: Colors.black54,
+                                  ),
+                                  widget.job.hub!.location != null &&
+                                          widget.job.hub!.location != ""
+                                      ? Text(widget.job.hub!.location!,
+                                          style: const TextStyle(fontSize: 13))
+                                      : const Text("Unknown",
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.black54)),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_today,
+                                    size: 13,
+                                  ),
+                                  Text(
+                                      'Posted On: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.job.createdAt!))}')
+                                ],
+                              )
+                            ],
+                          ),
+                          widget.job.hub?.logo != null &&
+                                  widget.job.hub!.logo != ''
                               ? GestureDetector(
                                   onTap: () {
                                     Get.to(() => CompanyDetailPage(
-                                          job: job,
+                                          job: widget.job,
                                         ));
                                   },
-                                  child: Image.network(job.hub!.logo!,
+                                  child: Image.network(widget.job.hub!.logo!,
                                       width: 100, height: 100))
                               : Container(),
-                          TextButton(
-                              onPressed: () {
-                                Get.to(() => CompanyDetailPage(
-                                      job: job,
-                                    ));
-                              },
-                              child: const Text("View Company Detail"))
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        job.hub?.name ?? 'Unknown Company',
-                        style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
+                      const SizedBox(height: 16),
+                      Container(
+                        color: Colors.black,
+                        height: 2,
                       ),
-                      const SizedBox(height: 8),
-
-                      // Job Title and Type
-                      Text(
-                        job.title ?? 'Unknown Job Title',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          const Icon(Icons.money),
+                          const Text(
+                            ' CTC (Annual): ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                              ' ${widget.job.salaryStart}-${widget.job.salaryEnd}')
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Type: ${job.type ?? 'Full-Time'} | Location: ${job.location ?? 'Not specified'}',
-                        style:
-                            const TextStyle(fontSize: 16, color: Colors.grey),
+                      Row(
+                        children: [
+                          const Icon(Icons.lock_clock),
+                          const Text(
+                            ' Apply By: ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                              ' ${DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.job.hiringStartDate!))}')
+                        ],
                       ),
-                      const SizedBox(height: 8),
-
-                      // Job Description
+                      Row(
+                        children: [
+                          const Icon(Icons.people),
+                          const Text(
+                            ' Number of Opening: ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(' ${widget.job.numberOfOpenings}')
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Icon(Icons.work),
+                          const Text(
+                            ' Type: ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(widget.job.type ?? 'Full-Time'),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        color: Colors.black,
+                        height: 2,
+                      ),
+                      const SizedBox(height: 16),
                       const Text(
-                        'Description:',
+                        'About the Job:',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        job.description ?? 'No description available.',
-                        style: const TextStyle(fontSize: 16),
+                        widget.job.description ?? 'No description available.',
+                        //),
                       ),
-                      const SizedBox(height: 12),
-
-                      // Skills & Requirements
-                      job.skills != null && job.skills!.isNotEmpty
+                      const SizedBox(height: 8),
+                      widget.job.skills != null && widget.job.skills!.isNotEmpty
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -111,7 +206,7 @@ class JobDetailPage extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Wrap(
                                   spacing: 8.0,
-                                  children: job.skills!
+                                  children: widget.job.skills!
                                       .map((skill) => Chip(label: Text(skill)))
                                       .toList(),
                                 ),
@@ -119,7 +214,8 @@ class JobDetailPage extends StatelessWidget {
                             )
                           : Container(),
                       const SizedBox(height: 12),
-                      job.requirements != null && job.requirements!.isNotEmpty
+                      widget.job.requirements != null &&
+                              widget.job.requirements!.isNotEmpty
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -130,111 +226,52 @@ class JobDetailPage extends StatelessWidget {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
-                                for (var requirement in job.requirements!)
+                                for (var requirement
+                                    in widget.job.requirements!)
                                   Text(
                                     '• $requirement',
-                                    style: const TextStyle(fontSize: 16),
+                                    // style: const TextStyle(fontSize: 16),
                                   ),
                               ],
                             )
                           : Container(),
-                      const SizedBox(height: 12),
-
-                      // Salary Range
-                      job.salaryStart != null && job.salaryEnd != null
-                          ? Text(
-                              'Salary: ₹${job.salaryStart} - ₹${job.salaryEnd}',
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            )
-                          : Container(),
-                      const SizedBox(height: 12),
-
-                      // Hiring Dates
-                      job.hiringStartDate != null && job.hiringEndDate != null
-                          ? Text(
-                              'Hiring Period: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(job.hiringStartDate!))} to ${DateFormat('dd/MM/yyyy').format(DateTime.parse(job.hiringEndDate!))}',
-                              style: const TextStyle(fontSize: 16),
-                            )
-                          : Container(),
-                      const SizedBox(height: 12),
-
-                      // Work Mode
-                      Text(
-                        'Work Mode: ${job.workMode ?? 'Not specified'}',
-                        style: const TextStyle(fontSize: 16),
+                      const SizedBox(height: 16),
+                      Container(
+                        color: Colors.black,
+                        height: 2,
                       ),
-                      const SizedBox(height: 12),
-
-                      // HR Contact Info
-                      job.hrContact != null && job.hrContact!.isNotEmpty
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'HR Contact:',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                for (var hr in job.hrContact!)
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Name: ${hr.name ?? 'Unknown'}',
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                        Text(
-                                          'Email: ${hr.email ?? 'Unknown'}',
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            )
-                          : Container(),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      const Text(
-                        'How to Apply:',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      const Text("Click on the apply button to Apply",
-                          style:
-                              TextStyle(fontSize: 16, color: Colors.black54)),
-
-                      const SizedBox(height: 20),
-
-                      // Apply Button
+                      const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: () {
-                          // Implement the functionality for applying to the job
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                          onPressed: () {
+                            // Implement the functionality for applying to the job
+                            jobController.isAppling.value == false
+                                ? jobController.applyNow(
+                                    widget.job.id!, widget.job.application!)
+                                : Utils.showtoast('Already Applied');
+                            Get.back();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
-                        ),
-                        child: const Text(
-                          'Apply Now',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                      ),
+                          child: Obx(
+                            () => jobController.isAppling.value == false
+                                ? const Text(
+                                    'Apply Now',
+                                    // : "Applied",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white),
+                                  )
+                                : const Text(
+                                    'Applied',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white),
+                                  ),
+                          )),
                     ],
                   ),
                 ),

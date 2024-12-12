@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/main.dart';
 
 class IconText extends StatelessWidget {
@@ -27,7 +28,10 @@ class IconText extends StatelessWidget {
             width: mq.width * 0.4,
             child: Text(
               text,
-              style: const TextStyle(fontWeight: FontWeight.w300),
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: AppColors.greyDark,
+              ),
             ))
       ],
     );

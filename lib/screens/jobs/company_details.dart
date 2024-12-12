@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:sih_internship_app/componets/job_small.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/helpers/utils.dart';
+import 'package:sih_internship_app/main.dart';
 import 'package:sih_internship_app/models/job.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -55,41 +56,48 @@ class CompanyDetailPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        job.hub?.name ?? 'Unknown Company',
-                        style: const TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary),
-                      ),
-                      job.hub?.domain != null && job.hub?.domain != ''
-                          ? Row(
-                              children: [
-                                const Icon(Icons.domain),
-                                Text(
-                                  'Domain: ${job.hub?.domain}',
-                                  style: const TextStyle(
-                                      fontSize: 18, color: AppColors.primary),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                      job.hub?.location != null && job.hub?.location != ''
-                          ? Row(
-                              children: [
-                                const Icon(Icons.location_on),
-                                Text(
-                                  'Location: ${job.hub?.location}',
-                                  style: const TextStyle(
-                                      fontSize: 16, color: AppColors.primary),
-                                ),
-                              ],
-                            )
-                          : Container(),
-                    ],
+                  SizedBox(
+                    width: mq.width * 0.65,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          job.hub?.name ?? 'Unknown Company',
+                          style: const TextStyle(
+                              fontSize: 26,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary),
+                        ),
+                        job.hub?.domain != null && job.hub?.domain != ''
+                            ? Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.domain),
+                                  Text(
+                                    'Domain:\n ${job.hub?.domain}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 18, color: AppColors.primary),
+                                  ),
+                                ],
+                              )
+                            : Container(),
+                        job.hub?.location != null && job.hub?.location != ''
+                            ? Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.location_on),
+                                  Text(
+                                    'Location: \n${job.hub?.location}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 16, color: AppColors.primary),
+                                  ),
+                                ],
+                              )
+                            : Container(),
+                      ],
+                    ),
                   ),
                   job.hub?.logo != null && job.hub?.logo != ''
                       ? Image.network(job.hub?.logo ?? '',
@@ -200,6 +208,7 @@ class CompanyDetailPage extends StatelessWidget {
               Row(
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Image.asset("assets/icons/available.png",
                       //     height: 30, width: 30),
@@ -208,7 +217,8 @@ class CompanyDetailPage extends StatelessWidget {
                         size: 30,
                       ),
                       job.hub?.email != null
-                          ? Row(
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('Email: ',
                                     style: TextStyle(

@@ -25,7 +25,7 @@ class ProfileRepo {
         body: json.encode({
           "uid": uuid,
           "email": email,
-          "photoURL": photoURL.path,
+          // "photoURL": photoURL.path,
           "displayName": displayName,
         }),
       );

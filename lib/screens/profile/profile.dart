@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sih_internship_app/controllers/profile_controller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
+import 'package:sih_internship_app/screens/auth/login.dart';
 import 'package:sih_internship_app/screens/profile/create_profile.dart';
 import 'package:sih_internship_app/screens/profile/edit_profile.dart';
 
@@ -14,6 +16,7 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.primary,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: AppColors.primary,
@@ -32,6 +35,18 @@ class Profile extends StatelessWidget {
                 color: AppColors.background,
               ))
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.background,
+        onPressed: () {
+          FirebaseAuth.instance.signOut().then((value) {
+            Get.to(const Login());
+          });
+        },
+        child: const Icon(
+          Icons.logout,
+          color: AppColors.primary,
+        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
