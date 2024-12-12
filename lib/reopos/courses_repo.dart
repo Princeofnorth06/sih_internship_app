@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:sih_internship_app/api_routes.dart';
 import 'package:sih_internship_app/models/courses_model.dart';
+import 'package:sih_internship_app/models/video_model.dart';
 
 class CoursesRepo {
   Future<List<CourseModel>> getAllCourses() async {
@@ -41,38 +42,73 @@ class CoursesRepo {
     }
   }
 
- Future<CourseModel> getCoarseById(String id) async {
-  final Uri url = Uri.parse("${ApiRoutes.getCourseById}$id"); // API route
-  log(url.toString());
-  try {
-    final response = await http.get(
-      url,
-      headers: {'Content-Type': 'application/json'},
-    );
+  Future<CourseModel> getCoarseById(String id) async {
+    final Uri url = Uri.parse("${ApiRoutes.getCourseById}$id"); // API route
+    log(url.toString());
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
 
-    if (response.statusCode == 200) {
-      // Parse the response body as JSON
-      final jsonResponse = jsonDecode(response.body);
-      log(response.body);
-      if (kDebugMode) {
-        print('Success: $jsonResponse');
-      }
+      if (response.statusCode == 200) {
+        // Parse the response body as JSON
+        final jsonResponse = jsonDecode(response.body);
+        log(response.body);
+        if (kDebugMode) {
+          print('Success: $jsonResponse');
+        }
 
-      // Parse the JSON to CourseModel
-      return CourseModel.fromJson(jsonResponse['course']);
-    } else {
-      // Handle failure
-      if (kDebugMode) {
-        print('Failed: ${response.statusCode}');
+        // Parse the JSON to CourseModel
+        return CourseModel.fromJson(jsonResponse['course']);
+      } else {
+        // Handle failure
+        if (kDebugMode) {
+          print('Failed: ${response.statusCode}');
+        }
+        throw Exception(
+            'Failed to load course, status code: ${response.statusCode}');
       }
-      throw Exception('Failed to load course, status code: ${response.statusCode}');
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Error fetching course: $e');
     }
-  } catch (e) {
-    if (kDebugMode) {
-      print('Error: $e');
-    }
-    throw Exception('Error fetching course: $e');
   }
-}
 
+  Future<VideoResponse> getVideoById(String id) async {
+    final Uri url = Uri.parse("${ApiRoutes.getVideosById}/$id"); // API route
+    log(url.toString());
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        // Parse the response body as JSON
+        final jsonResponse = jsonDecode(response.body);
+        log(response.body);
+        if (kDebugMode) {
+          print('Success: $jsonResponse');
+        }
+
+        // Parse the JSON to CourseModel
+        return VideoResponse.fromJson(jsonResponse);
+      } else {
+        // Handle failure
+        if (kDebugMode) {
+          print('Failed: ${response.statusCode}');
+        }
+        throw Exception(
+            'Failed to load course, status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Error fetching course: $e');
+    }
+  }
 }

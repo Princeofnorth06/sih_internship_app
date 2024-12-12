@@ -1,9 +1,21 @@
 import 'package:get/get.dart';
 import 'package:sih_internship_app/models/courses_model.dart';
+import 'package:sih_internship_app/models/video_model.dart';
 import 'package:sih_internship_app/reopos/courses_repo.dart';
 
 class CourseController extends GetxController {
   final courses = <CourseModel>[].obs;
+
+  Future<VideoResponse?> getPlaylist(String id) async {
+    try {
+      final newrespo = await CoursesRepo().getVideoById(id);
+      return newrespo;
+    } catch (e) {
+      print('Error fetching courses: $e');
+      Get.snackbar('Error', 'Failed to load courses.');
+      return null;
+    }
+  }
 
   Future<void> getAllCourses() async {
     try {

@@ -10,6 +10,7 @@ import 'package:sih_internship_app/controllers/profile_controller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/main.dart';
 import 'package:sih_internship_app/reopos/courses_repo.dart';
+import 'package:sih_internship_app/screens/course.dart';
 import 'package:sih_internship_app/screens/jobs/jobs.dart';
 import 'package:sih_internship_app/screens/profile/profile.dart'; // Import for Timer
 
@@ -61,14 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         backgroundColor: Colors.black12,
         appBar: AppBar(
-          actions: [
-            IconButton(
-                onPressed: () {
-                  CoursesRepo coursesRepo = CoursesRepo();
-                  coursesRepo.getAllCourses();
-                },
-                icon: const Icon(Icons.abc))
-          ],
           backgroundColor: AppColors.background,
           centerTitle: true,
           title: const Text(
@@ -105,13 +98,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text(
-                        'Hii, ${profileController.userProfile.value.payload.userName},\nWelcome to Rajasthan Connect ',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                            color: AppColors.background),
-                      ),
+                      Obx(
+                        () => profileController
+                                .userProfile.value.payload.userName.isNotEmpty
+                            ? Text(
+                                'Hii, ${profileController.userProfile.value.payload.userName},\nWelcome to Rajasthan Connect ',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 18,
+                                    color: AppColors.background),
+                              )
+                            : const SizedBox(),
+                      )
                     ],
                   ),
                   const SizedBox(
@@ -216,7 +214,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               () => profileController.userProfile.value.payload
                                       .jobsApplied.isNotEmpty
                                   ? Text(
-                                      jobController.jobs.value.jobs!.length
+                                      profileController.userProfile.value
+                                          .payload.jobsApplied.length
                                           .toString(),
                                       style: const TextStyle(
                                         fontSize: 18,
@@ -274,7 +273,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.white60),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Get.to(() => const Course());
+                                    },
                                     child: const Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,

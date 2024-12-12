@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/main.dart';
 import 'package:get/get.dart';
 import 'package:sih_internship_app/controllers/courses_controller.dart';
 import 'package:sih_internship_app/helpers/cofig.dart';
 import 'package:sih_internship_app/main.dart';
 import 'package:sih_internship_app/models/courses_model.dart';
 import 'package:sih_internship_app/models/job.dart';
+import 'package:sih_internship_app/models/video_model.dart';
 import 'package:sih_internship_app/screens/jobs/jobs.dart';
+import 'package:sih_internship_app/screens/playvideopage.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final String courseId;
@@ -22,11 +25,18 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     hub = await jobController.getHubById(course.hubId ?? "");
   }
 
+  VideoResponse? videoResponse;
+  getVideosById() async {
+    videoResponse =
+        (await Get.put(CourseController()).getPlaylist(widget.courseId));
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Get.put(CourseController()).getCourseById(widget.courseId);
+    getVideosById();
   }
 
   @override
@@ -53,57 +63,88 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             // Data is available, display course details
             final course = snapshot.data!;
             sethub(course);
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    course.title,
-                    style: const TextStyle(
-                      color: AppColors.background,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    "by ${hub.name ?? "Unknown"}",
-                    style: const TextStyle(
-                      color: AppColors.background,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ClipRRect(
-                    //  borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      course.thumbnail,
-                      width: mq.width * 0.93,
-                      height: mq.height * 0.2,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    course.description,
-                    style: const TextStyle(
-                      color: AppColors.background,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const Text(
-                    "Playlist",
-                    style: TextStyle(
-                        fontSize: 30,
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      course.title,
+                      style: const TextStyle(
+                        color: AppColors.background,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.background),
-                  ),
-                  
-                ],
+                      ),
+                    ),
+                    Text(
+                      "by ${hub.name ?? "Unknown"}",
+                      style: const TextStyle(
+                        color: AppColors.background,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ClipRRect(
+                      //  borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        course.thumbnail,
+                        width: mq.width * 0.93,
+                        height: mq.height * 0.2,
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      course.description,
+                      style: const TextStyle(
+                        color: AppColors.background,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const Text(
+                      "Playlist",
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.background),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    SizedBox(
+                      height: mq.height * 0.5,
+                      child: ListView.builder(
+                          itemCount: videoResponse!.videos.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                                title: Text(
+                                  videoResponse!.videos[index].title,
+                                  style: const TextStyle(
+                                      color: AppColors.background),
+                                ),
+                                subtitle: Text(
+                                    videoResponse!.videos[index].description,
+                                    style:
+                                        const TextStyle(color: Colors.white54)),
+                                trailing: IconButton(
+                                    icon: const Icon(Icons.play_arrow),
+                                    onPressed: () async {
+                                      Get.to(
+                                        () => PlayVideo(
+                                          video: videoResponse!.videos[index],
+                                          thumbnail: course.thumbnail,
+                                        ),
+                                      );
+                                    }));
+                          }),
+                    )
+                  ],
+                ),
               ),
             );
           }

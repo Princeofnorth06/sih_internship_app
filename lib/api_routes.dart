@@ -9,5 +9,6 @@ class ApiRoutes {
   static const getAllJobById = "$serverUrl/api/v1/hub/job";
   static const getHubById = "$serverUrl/api/v1/hub/id";
   static const getAllCourses = "$serverUrl/api/v1/course/courses";
+  static const getVideosById = "$serverUrl/api/v1/course/video";
   static const getCourseById = "$serverUrl/api/v1/course/";
 }

@@ -8,13 +8,14 @@ class VideoPlayerWidget extends StatefulWidget {
   final String description;
 
   const VideoPlayerWidget({
-    Key? key,
+    super.key,
     required this.videoUrl,
     required this.thumbnailUrl,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
 }
 
@@ -35,6 +36,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           );
         });
       });
+    setState(() {});
   }
 
   @override
@@ -60,7 +62,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               fit: BoxFit.cover,
             ),
             IconButton(
-              icon: Icon(Icons.play_circle_filled, size: 64, color: Colors.white),
+              icon: const Icon(Icons.play_circle_filled,
+                  size: 64, color: Colors.white),
               onPressed: () {
                 // Navigate to video player screen or open inline player
                 showDialog(
@@ -77,12 +80,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               },
             ),
           ],
-        ),
-        SizedBox(height: 16),
-        // Description
-        Text(
-          widget.description,
-          style: TextStyle(fontSize: 16),
         ),
       ],
     );
